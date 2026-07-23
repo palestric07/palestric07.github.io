@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Musadiq Munir — Unity Game Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0A0C10;
+    --surface:   #111318;
+    --border:    #1E2130;
+    --accent:    #4AE3A0;
+    --accent2:   #6C63FF;
+    --text:      #E8EAF0;
+    --muted:     #6B7280;
+    --card:      #13161E;
+    --glow:      rgba(74,227,160,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(10,12,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: 500;
+    color: var(--accent); letter-spacing: 0.05em;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 14px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 120px 48px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -100px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(74,227,160,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -100px; left: 200px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(108,99,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-content { max-width: 760px; position: relative; z-index: 1; }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 32px; height: 1px; background: var(--accent);
+  }
+  h1 {
+    font-size: clamp(48px, 7vw, 80px);
+    font-weight: 700; line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-size: 18px; color: var(--muted);
+    max-width: 520px; margin-bottom: 40px; line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #0A0C10;
+    padding: 14px 28px; border-radius: 6px;
+    font-weight: 600; font-size: 14px; text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-ghost {
+    border: 1px solid var(--border); color: var(--text);
+    padding: 14px 28px; border-radius: 6px;
+    font-weight: 500; font-size: 14px; text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  /* ── STATS STRIP ── */
+  .stats {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-size: 36px; font-weight: 700;
+    color: var(--accent); line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  /* ── SECTIONS ── */
+  section { padding: 96px 48px; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--accent);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 48px;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    transition: border-color 0.25s, transform 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .project-card:hover { border-color: rgba(74,227,160,0.3); transform: translateY(-3px); }
+  .project-card:hover::before { opacity: 1; }
+  .project-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent2);
+    background: rgba(108,99,255,0.12);
+    padding: 3px 10px; border-radius: 20px;
+    display: inline-block; margin-bottom: 14px;
+    letter-spacing: 0.05em;
+  }
+  .project-card h3 {
+    font-size: 18px; font-weight: 600;
+    margin-bottom: 10px; line-height: 1.3;
+  }
+  .project-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .project-features {
+    margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .feature-chip {
+    font-size: 11px; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .skill-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px;
+  }
+  .skill-block h4 {
+    font-size: 13px; font-weight: 600;
+    color: var(--accent); margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .skill-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    font-size: 12px; padding: 5px 12px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  /* ── EXPERIENCE ── */
+  .exp-list { display: flex; flex-direction: column; gap: 28px; }
+  .exp-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 28px 32px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 8px 24px; align-items: start;
+  }
+  .exp-item h3 { font-size: 17px; font-weight: 600; }
+  .exp-company { color: var(--accent); font-size: 14px; margin-top: 4px; }
+  .exp-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    white-space: nowrap; padding-top: 3px;
+  }
+  .exp-bullets {
+    grid-column: 1 / -1;
+    margin-top: 12px; padding-left: 16px;
+  }
+  .exp-bullets li {
+    font-size: 14px; color: var(--muted);
+    margin-bottom: 6px; line-height: 1.6;
+  }
+  .exp-bullets li::marker { color: var(--accent); }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    text-align: center;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-section h2 { margin-bottom: 16px; }
+  .contact-section p { color: var(--muted); margin-bottom: 40px; font-size: 16px; }
+  .contact-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .contact-link {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 12px 20px; border-radius: 8px;
+    color: var(--text); text-decoration: none; font-size: 14px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .contact-link:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-link svg { width: 16px; height: 16px; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 28px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+  }
+  footer p { font-size: 13px; color: var(--muted); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── GRID BG ── */
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* ── GAMEPLAY VIDEOS ── */
+  .gameplay-section { background: var(--bg); }
+  .video-featured {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .video-featured::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    z-index: 2;
+  }
+  .video-thumb {
+    width: 100%; aspect-ratio: 16/9;
+    background: #0d0f15;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+  .video-thumb iframe {
+    width: 100%; height: 100%; border: none; display: block;
+  }
+  .video-placeholder {
+    width: 100%; aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #0d0f15 0%, #13161E 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px; cursor: pointer; position: relative;
+    border: none;
+  }
+  .video-placeholder .play-ring {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 0 32px rgba(74,227,160,0.2);
+  }
+  .video-placeholder:hover .play-ring {
+    background: rgba(74,227,160,0.15); transform: scale(1.08);
+  }
+  .play-ring svg { width: 28px; height: 28px; fill: var(--accent); margin-left: 4px; }
+  .video-placeholder .coming-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted); letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  /* animated scanline on placeholder */
+  .video-placeholder::after {
+    content: '';
+    position: absolute; left: 0; right: 0;
+    height: 2px; background: rgba(74,227,160,0.12);
+    animation: scan 3s linear infinite;
+  }
+  @keyframes scan { from { top: 0; } to { top: 100%; } }
+
+  .video-info { padding: 24px 28px 28px; }
+  .video-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(74,227,160,0.1); border: 1px solid rgba(74,227,160,0.25);
+    color: var(--accent); font-size: 11px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .video-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); animation: blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+  .video-info h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .video-info p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 640px; }
+  .video-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+  /* smaller video cards grid */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .video-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .video-card:hover { border-color: rgba(74,227,160,0.3); transform: translateY(-3px); }
+  .video-card-thumb {
+    width: 100%; aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #0d0f15, #13161E);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+    position: relative; overflow: hidden;
+  }
+  .video-card-thumb::after {
+    content: ''; position: absolute; left: 0; right: 0;
+    height: 1px; background: rgba(74,227,160,0.08);
+    animation: scan 4s linear infinite;
+  }
+  .mini-play {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 1.5px solid rgba(74,227,160,0.5);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mini-play svg { width: 18px; height: 18px; fill: rgba(74,227,160,0.7); margin-left: 3px; }
+  .video-card-thumb span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .video-card-body { padding: 16px 18px 18px; }
+  .video-card-tag {
+    font-size: 11px; color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 6px; display: block;
+  }
+  .video-card-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .video-card-body p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .video-note {
+    margin-top: 28px; padding: 16px 20px;
+    background: rgba(74,227,160,0.05);
+    border: 1px solid rgba(74,227,160,0.15);
+    border-radius: 8px;
+    font-size: 13px; color: var(--muted); line-height: 1.6;
+  }
+  .video-note span { color: var(--accent); font-weight: 600; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    section { padding: 64px 20px; }
+    .stats { grid-template-columns: repeat(2,1fr); padding: 24px 20px; }
+    .exp-item { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">MM.dev</div>
+  <ul class="nav-links">
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#gameplay">Gameplay</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">Unity Game Developer</div>
+    <h1>Musadiq<br><span class="accent">Munir.</span></h1>
+    <p class="hero-sub">
+      Building immersive 2D &amp; 3D games with Unity and C#. 
+      Currently interning at DevSynt — turning game mechanics ideas into playable reality.
+    </p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="#contact" class="btn-ghost">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats reveal">
+  <div class="stat">
+    <div class="stat-num">6+</div>
+    <div class="stat-label">Unity Projects</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">2D/3D</div>
+    <div class="stat-label">Game Development</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">1+</div>
+    <div class="stat-label">Years Building</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Passion for Games</div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">Featured Work</div>
+  <h2>Projects</h2>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <span class="project-tag">Unity 3D · Ongoing</span>
+      <h3>3D Game Exploration</h3>
+      <p>A 3D game featuring a fully rigged player controller, dynamic third-person camera system, and C#-driven physics interactions.</p>
+      <div class="project-features">
+        <span class="feature-chip">3D Player Controller</span>
+        <span class="feature-chip">Camera System</span>
+        <span class="feature-chip">Physics</span>
+        <span class="feature-chip">C#</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-tag">Unity 2D · Action</span>
+      <h3>Crab Hunter</h3>
+      <p>Action game with custom enemy crab AI using state machines (patrol/chase/attack), combat mechanics, and wave-based difficulty scaling.</p>
+      <div class="project-features">
+        <span class="feature-chip">Enemy AI</span>
+        <span class="feature-chip">Wave System</span>
+        <span class="feature-chip">Combat</span>
+        <span class="feature-chip">State Machine</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-tag">Unity 2D · Platformer</span>
+      <h3>Monster Chase</h3>
+      <p>Complete 2D game loop with player movement, collision logic, enemy tracking AI, and full game state management.</p>
+      <div class="project-features">
+        <span class="feature-chip">Game Loop</span>
+        <span class="feature-chip">Enemy Tracking</span>
+        <span class="feature-chip">Collision</span>
+        <span class="feature-chip">UI</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-tag">Unity 2D · Hyper Casual</span>
+      <h3>Flappy Bird Clone</h3>
+      <p>Procedural obstacle generation, infinite terrain scrolling, custom shaders, and object pooling for stable performance.</p>
+      <div class="project-features">
+        <span class="feature-chip">Procedural Gen</span>
+        <span class="feature-chip">Shaders</span>
+        <span class="feature-chip">Object Pooling</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-tag">Unity 2D · Endless Runner</span>
+      <h3>Dino Runner</h3>
+      <p>Endless runner with infinite terrain generation, sprite animation, and optimized performance for low-end devices.</p>
+      <div class="project-features">
+        <span class="feature-chip">Infinite Terrain</span>
+        <span class="feature-chip">Animation</span>
+        <span class="feature-chip">Optimization</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-tag">n8n · Automation</span>
+      <h3>Climate Control Workflow</h3>
+      <p>Automated HVAC tracking and energy consumption calculation using n8n workflow engine with rule-based API integrations.</p>
+      <div class="project-features">
+        <span class="feature-chip">n8n</span>
+        <span class="feature-chip">API Integration</span>
+        <span class="feature-chip">Automation</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GAMEPLAY VIDEOS -->
+<section id="gameplay" class="gameplay-section">
+  <div class="section-label">In Action</div>
+  <h2>Gameplay Videos</h2>
+
+  <!-- FEATURED: Velocity Rogue -->
+  <div class="video-featured reveal">
+    <div class="video-thumb">
+      <iframe src="https://www.youtube.com/embed/VoaURrQKURo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    </div>
+    <div class="video-info">
+      <div class="video-badge"><span class="dot"></span>In Development</div>
+      <h3>Velocity Rogue</h3>
+      <p>An ambitious open-world 3D gangster game built in Unity. Features a third-person player controller, dynamic urban environment, physics-driven interactions, and a gritty atmospheric world — all engineered from scratch in C#.</p>
+      <div class="video-chips">
+        <span class="feature-chip">Unity 3D</span>
+        <span class="feature-chip">C#</span>
+        <span class="feature-chip">3rd Person Controller</span>
+        <span class="feature-chip">Open World</span>
+        <span class="feature-chip">Physics</span>
+        <span class="feature-chip">Urban Environment</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO GRID -->
+  <div class="video-grid">
+
+    <!-- Shadow Hollow -->
+    <div class="video-card reveal">
+      <div class="video-thumb" style="aspect-ratio:16/9;">
+        <iframe src="https://www.youtube.com/embed/B0rPV4agwZU" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+      <div class="video-card-body">
+        <span class="video-card-tag">Unity 3D · Horror</span>
+        <h4>Shadow Hollow</h4>
+        <p>Atmospheric 3D horror game with dynamic lighting, eerie environment, and immersive gameplay mechanics.</p>
+      </div>
+    </div>
+
+    <!-- Crab Hunter -->
+    <div class="video-card reveal">
+      <div class="video-thumb" style="aspect-ratio:16/9;">
+        <iframe src="https://www.youtube.com/embed/g6Ar0gxTRYs" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+      <div class="video-card-body">
+        <span class="video-card-tag">Unity 2D · Action</span>
+        <h4>Crab Hunter</h4>
+        <p>Enemy AI with patrol/chase/attack states, wave-based combat, and custom hit detection in action.</p>
+      </div>
+    </div>
+
+    <!-- Flappy Bird -->
+    <div class="video-card reveal">
+      <div class="video-thumb" style="aspect-ratio:16/9;">
+        <iframe src="https://www.youtube.com/embed/-Q7C52gWWeA" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+      <div class="video-card-body">
+        <span class="video-card-tag">Unity 2D · Hyper Casual</span>
+        <h4>Flappy Bird Clone</h4>
+        <p>Procedural obstacles, object pooling, custom shaders, and smooth physics running live.</p>
+      </div>
+    </div>
+
+    <!-- Dino Runner -->
+    <div class="video-card reveal">
+      <div class="video-thumb" style="aspect-ratio:16/9;">
+        <iframe src="https://www.youtube.com/embed/4xRlYaiSlR8" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+      <div class="video-card-body">
+        <span class="video-card-tag">Unity 2D · Endless Runner</span>
+        <h4>Dino Runner</h4>
+        <p>Infinite terrain generation, sprite animation, and optimized performance in real-time.</p>
+      </div>
+    </div>
+
+    <!-- Monster Chase -->
+    <div class="video-card reveal">
+      <div class="video-thumb" style="aspect-ratio:16/9;">
+        <iframe src="https://www.youtube.com/embed/9TPOGwBNKNE" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+      <div class="video-card-body">
+        <span class="video-card-tag">Unity 2D · Platformer</span>
+        <h4>Monster Chase</h4>
+        <p>Full game loop, enemy tracking AI, collision mechanics, and complete game state management.</p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- SKILLS -->
+<section id="skills" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="section-label">What I Work With</div>
+  <h2>Skills</h2>
+  <div class="skills-grid">
+    <div class="skill-block reveal">
+      <h4>Game Engine</h4>
+      <div class="skill-pills">
+        <span class="pill">Unity Engine</span>
+        <span class="pill">C#</span>
+        <span class="pill">C++</span>
+        <span class="pill">Game Architecture</span>
+      </div>
+    </div>
+    <div class="skill-block reveal">
+      <h4>2D / 3D Dev</h4>
+      <div class="skill-pills">
+        <span class="pill">3D Player Controller</span>
+        <span class="pill">Camera Systems</span>
+        <span class="pill">Physics & Collision</span>
+        <span class="pill">Animator</span>
+        <span class="pill">Shaders</span>
+        <span class="pill">Prefabs</span>
+      </div>
+    </div>
+    <div class="skill-block reveal">
+      <h4>UI / Systems</h4>
+      <div class="skill-pills">
+        <span class="pill">UI / HUD</span>
+        <span class="pill">Enemy AI</span>
+        <span class="pill">Wave Systems</span>
+        <span class="pill">Procedural Gen</span>
+        <span class="pill">Object Pooling</span>
+      </div>
+    </div>
+    <div class="skill-block reveal">
+      <h4>Tools</h4>
+      <div class="skill-pills">
+        <span class="pill">Git & GitHub</span>
+        <span class="pill">VS Code</span>
+        <span class="pill">n8n</span>
+        <span class="pill">HTML / CSS / JS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Work History</div>
+  <h2>Experience</h2>
+  <div class="exp-list">
+
+    <div class="exp-item reveal">
+      <div>
+        <h3>Game Development Intern</h3>
+        <div class="exp-company">DevSynt — Remote</div>
+      </div>
+      <div class="exp-date">July 2026 – Present</div>
+      <ul class="exp-bullets">
+        <li>Implementing gameplay mechanics including player movement, interaction systems, and enemy logic in Unity using C#.</li>
+        <li>Optimizing game performance through profiling, memory management, and physics refinements.</li>
+      </ul>
+    </div>
+
+    <div class="exp-item reveal">
+      <div>
+        <h3>Freelance Game & Automation Developer</h3>
+        <div class="exp-company">Self-Employed — Remote</div>
+      </div>
+      <div class="exp-date">2024 – Present</div>
+      <ul class="exp-bullets">
+        <li>Designed and developed interactive 2D and 3D game prototypes and mechanics using Unity and C#.</li>
+        <li>Built custom workflow automations using n8n with rule-based API integrations.</li>
+      </ul>
+    </div>
+
+    <div class="exp-item reveal">
+      <div>
+        <h3>BS Software Engineering</h3>
+        <div class="exp-company">University of Sargodha</div>
+      </div>
+      <div class="exp-date">2023 – Present (3rd Sem)</div>
+      <ul class="exp-bullets">
+        <li>Relevant coursework: Data Structures, OOP, Calculus, Software Design Principles.</li>
+        <li>Actively building a Unity game development portfolio alongside academic studies.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="section-label">Let's Work Together</div>
+  <h2>Get In Touch</h2>
+  <p>Open to remote internships, freelance game projects, and collaborations.</p>
+  <div class="contact-links">
+    <a href="mailto:musadiq.munir1038@gmail.com" class="contact-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+      musadiq.munir1038@gmail.com
+    </a>
+    <a href="https://github.com/palestric07" target="_blank" class="contact-link">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      github.com/palestric07
+    </a>
+    <a href="https://linkedin.com/in/musadiq-munir" target="_blank" class="contact-link">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      linkedin.com/in/musadiq-munir
+    </a>
+    <a href="tel:+923116787011" class="contact-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      +92 311 6787011
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Musadiq Munir. Built with passion for game dev.</p>
+  <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);">Unity · C# · Always Learning</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Smooth active nav
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? 'var(--accent)' : '';
+    });
+  });
+</script>
+</body>
+</html>
