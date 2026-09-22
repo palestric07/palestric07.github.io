@@ -475,6 +475,13 @@
     .stats { grid-template-columns: repeat(2,1fr); padding: 24px 20px; }
     .exp-item { grid-template-columns: 1fr; }
     footer { flex-direction: column; gap: 8px; text-align: center; }
+    .video-featured [style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+    .video-featured [style*="border-right"] {
+      border-right: none !important;
+      border-bottom: 1px solid var(--border);
+    }
   }
 </style>
 </head>
@@ -614,22 +621,42 @@
   <div class="section-label">In Action</div>
   <h2>Gameplay Videos</h2>
 
-  <!-- FEATURED: Velocity Rogue -->
-  <div class="video-featured reveal">
-    <div class="video-thumb">
-      <iframe src="https://www.youtube.com/embed/VoaURrQKURo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-    </div>
-    <div class="video-info">
-      <div class="video-badge"><span class="dot"></span>In Development</div>
-      <h3>Velocity Rogue</h3>
-      <p>An ambitious open-world 3D gangster game built in Unity. Features a third-person player controller, dynamic urban environment, physics-driven interactions, and a gritty atmospheric world — all engineered from scratch in C#.</p>
-      <div class="video-chips">
-        <span class="feature-chip">Unity 3D</span>
-        <span class="feature-chip">C#</span>
-        <span class="feature-chip">3rd Person Controller</span>
-        <span class="feature-chip">Open World</span>
-        <span class="feature-chip">Physics</span>
-        <span class="feature-chip">Urban Environment</span>
+  <!-- FEATURED: Two videos side by side -->
+  <div class="video-featured reveal" style="padding: 0;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+      <!-- Velocity Rogue -->
+      <div style="position: relative; border-right: 1px solid var(--border);">
+        <div class="video-thumb">
+          <iframe src="https://www.youtube.com/embed/VoaURrQKURo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+        <div class="video-info" style="padding: 20px 22px 24px;">
+          <div class="video-badge"><span class="dot"></span>In Development</div>
+          <h3 style="font-size:17px;">Velocity Rogue</h3>
+          <p style="font-size:13px;">Open-world 3D gangster game with third-person controller, urban environment, and physics-driven interactions.</p>
+          <div class="video-chips" style="margin-top:12px;">
+            <span class="feature-chip">Unity 3D</span>
+            <span class="feature-chip">3rd Person</span>
+            <span class="feature-chip">Open World</span>
+            <span class="feature-chip">C#</span>
+          </div>
+        </div>
+      </div>
+      <!-- Second Video -->
+      <div style="position: relative;">
+        <div class="video-thumb">
+          <iframe src="https://www.youtube.com/embed/shzM1s6ZOGc" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+        <div class="video-info" style="padding: 20px 22px 24px;">
+          <div class="video-badge" style="background: rgba(108,99,255,0.1); border-color: rgba(108,99,255,0.25); color: var(--accent2);"><span class="dot" style="background: var(--accent2);"></span>Latest Gameplay</div>
+          <h3 style="font-size:17px;">Velocity Rogue — Extended</h3>
+          <p style="font-size:13px;">Extended gameplay footage showcasing environment exploration, movement mechanics, and world interaction systems.</p>
+          <div class="video-chips" style="margin-top:12px;">
+            <span class="feature-chip">Gameplay</span>
+            <span class="feature-chip">Exploration</span>
+            <span class="feature-chip">Unity 3D</span>
+            <span class="feature-chip">Physics</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
